@@ -25,3 +25,14 @@ services:
       - ./data/replica:/data/replica
     ports:
       - 27018:27018
+  redis:
+    image: redis:latest
+    ports:
+      - 13000:13000
+    volumes:
+      - redis-data:/data
+volumes:
+  redis-data:
+    driver: local
+
+
