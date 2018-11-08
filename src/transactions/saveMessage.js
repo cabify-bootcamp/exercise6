@@ -29,7 +29,8 @@ function saveMessageTransaction(newValue) {
   return MessagePrimary.findOneAndUpdate(
     {"uuid": uuid}, newValue, {new: true})
     .then(doc => {
-      if ( doc === null ) {
+      console.log(doc)
+      if ( doc == null ) {
       return message.save()
         .then(doc => {
           console.log("Message saved successfully:", doc);
@@ -45,7 +46,8 @@ function saveMessageTransaction(newValue) {
           throw err;
         });
       } else {
-        return MessageReplica.findOneAndUpdate({"uuid": uuid}, newValue, {new: true})
+        MessageReplica.findOneAndUpdate({"uuid": uuid}, newValue, {new: true})
+        .then(doc => console.log(doc))
       }
     })
 }
