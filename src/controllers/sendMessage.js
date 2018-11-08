@@ -4,8 +4,9 @@ const getCredit = require("../clients/getCredit");
 
 const random = n => Math.floor(Math.random() * Math.floor(n));
 
-module.exports = function(req, res) {
-  const body = JSON.stringify(req.body);
+module.exports = function(message) {
+  const messageContent = message
+  const messageJSON = JSON.stringify(message);
 
   var query = getCredit();
 
@@ -25,7 +26,7 @@ module.exports = function(req, res) {
         json: true,
         headers: {
           "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(body)
+          "Content-Length": Buffer.byteLength(messageJSON)
         }
       };
 
@@ -35,15 +36,14 @@ module.exports = function(req, res) {
         if (postRes.statusCode === 200) {
           saveMessage(
             {
-              ...req.body,
+              ...messageContent,
               status: "OK"
             },
             function(_result, error) {
               if (error) {
-                res.statusCode = 500;
-                res.end(error);
+                console.log(error)
               } else {
-                res.end(postRes.body);
+                console.log(body)
               }
             }
           );
@@ -52,12 +52,11 @@ module.exports = function(req, res) {
 
           saveMessage(
             {
-              ...req.body,
+              ...messageContent,
               status: "ERROR"
             },
             () => {
-              res.statusCode = 500;
-              res.end("Internal server error: SERVICE ERROR");
+              console.log("Internal server error: SERVICE ERROR")
             }
           );
         }
@@ -71,23 +70,21 @@ module.exports = function(req, res) {
 
         saveMessage(
           {
-            ...req.body,
+            ...messageContent,
             status: "TIMEOUT"
           },
           () => {
-            res.statusCode = 500;
-            res.end("Internal server error: TIMEOUT");
+            console.log("Internal server error: TIMEOUT")
           }
         );
       });
 
       postReq.on("error", () => {});
 
-      postReq.write(body);
+      postReq.write(messageJSON);
       postReq.end();
     } else {
-      res.statusCode = 500;
-      res.end("No credit error");
+      console.log("No credit error")
     }
   });
 };

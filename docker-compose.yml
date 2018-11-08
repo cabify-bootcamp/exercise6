@@ -17,7 +17,7 @@ services:
     volumes:
       - ./data/db:/data/db
     ports:
-      - 27017:27017
+      - 27019:27017
   replica:
     image: mongo
     command: mongod --port 27018
@@ -28,11 +28,6 @@ services:
   redis:
     image: redis:latest
     ports:
-      - 13000:13000
-    volumes:
-      - redis-data:/data
-volumes:
-  redis-data:
-    driver: local
+      - 6379:6379
 
 

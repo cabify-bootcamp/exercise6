@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const servers = {
-  // primary: "exercise5_mongodb_1:27017",
-  // replica: "exercise5_replica_1:27018"
-  primary: "127.0.0.1:27017",
+  // primary: "mongodb:27017",
+  // replica: "replica:27018"
+  primary: "127.0.0.1:27019",
   replica: "127.0.0.1:27018"
 };
 const database = "cabify_bootcamp";
@@ -40,7 +40,7 @@ const connections = [
   createConnection("PRIMARY", servers.primary, database),
   createConnection("REPLICA", servers.replica, database)
 ];
-
+debugger;
 connections[0].isPrimary = true;
 setupConnection(connections[0], connections[1]);
 setupConnection(connections[1], connections[0]);
