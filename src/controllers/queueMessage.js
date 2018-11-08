@@ -3,7 +3,7 @@ const http = require("http");
 const sendMessage = require("./sendMessage");
 const uuidv4 = require('uuid/v4')
 
-var Bull = require('bull');
+var Queue = require('bull');
 
 
 module.exports = function(req, res) {
@@ -12,15 +12,16 @@ module.exports = function(req, res) {
     let messageObj = req.body;
     messageObj.uuid = uuid;
 
-    const messageQueue = new Bull('message queue');
+    const messageQueue = new Queue('message queue');
 
-    messageQueue.add(req.body).then( () => res.status(200).send(`Message send successfully, you can check the your message status using /messages/${uuid}/status`))
+    messageQueue.add(messageObj).then( () => res.status(200).send(`Message send successfully, you can check the your message status using /messages/${uuid}/status`))
 
     messageQueue.process(async (job, data) => {
 
         await sendMessage({...messageObj, status: "PROCESSING"})
 
     })
+
 
 };
 

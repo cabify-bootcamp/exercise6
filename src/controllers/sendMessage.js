@@ -43,7 +43,7 @@ module.exports = function(message) {
               if (error) {
                 console.log(error)
               } else {
-                console.log(body)
+                console.log(messageContent)
               }
             }
           );
