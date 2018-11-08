@@ -7,7 +7,6 @@ const random = n => Math.floor(Math.random() * Math.floor(n));
 module.exports = function(message) {
   const messageContent = message
   const messageJSON = JSON.stringify(message);
-
   var query = getCredit();
 
   query.exec(function(err, credit) {
@@ -34,6 +33,7 @@ module.exports = function(message) {
 
       postReq.on("response", postRes => {
         if (postRes.statusCode === 200) {
+          // updateMessage
           saveMessage(
             {
               ...messageContent,
@@ -49,7 +49,7 @@ module.exports = function(message) {
           );
         } else {
           console.error("Error while sending message");
-
+          // updateMessage
           saveMessage(
             {
               ...messageContent,
@@ -67,7 +67,7 @@ module.exports = function(message) {
       postReq.on("timeout", () => {
         console.error("Timeout Exceeded!");
         postReq.abort();
-
+        // updateMessage
         saveMessage(
           {
             ...messageContent,

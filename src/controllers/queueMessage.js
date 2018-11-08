@@ -1,5 +1,5 @@
 const http = require("http");
-
+const saveMessage = require('../transactions/saveMessage')
 const sendMessage = require("./sendMessage");
 const uuidv4 = require('uuid/v4')
 
@@ -14,15 +14,17 @@ const queueMessage = function(req, res, next) {
     let uuid = uuidv4();
     let messageObj = req.body;
     messageObj.uuid = uuid;
+    messageObj.status = "PENDING"
 
+    saveMessage(messageObj)
+    
     return messageQueue.add(messageObj).then( () => res.status(200).send(`Message send successfully, you can check the your message status using /messages/${uuid}/status`))
 
 }
 
 messageQueue.process(async (job, done) => {
-    await sendMessage({...job.data, status: "PROCESSING"})
+    await sendMessage({...job.data})
     done()
-    
 })
 
 messageQueue.on('completed', (job, result) => {

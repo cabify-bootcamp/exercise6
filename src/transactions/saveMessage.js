@@ -22,28 +22,36 @@ function saveMessageReplica(replica, retries) {
 function saveMessageTransaction(newValue) {
   const MessagePrimary = Message();
   const MessageReplica = Message("replica");
+  const uuid = newValue.uuid
 
   let message = new MessagePrimary(newValue);
 
-  return message
-    .save()
+  return MessagePrimary.findOneAndUpdate(
+    {"uuid": uuid}, newValue, {new: true})
     .then(doc => {
-      console.log("Message saved successfully:", doc);
-      return cleanClone(doc);
+      if ( doc === null ) {
+      return message.save()
+        .then(doc => {
+          console.log("Message saved successfully:", doc);
+          return cleanClone(doc);
+        })
+        .then(clone => {
+          let replica = new MessageReplica(clone);
+          saveMessageReplica(replica, 3);
+          return clone;
+        })
+        .catch(err => {
+          console.log("Error while saving message", err);
+          throw err;
+        });
+      } else {
+        return MessageReplica.findOneAndUpdate({"uuid": uuid}, newValue, {new: true})
+      }
     })
-    .then(clone => {
-      let replica = new MessageReplica(clone);
-      saveMessageReplica(replica, 3);
-      return clone;
-    })
-    .catch(err => {
-      console.log("Error while saving message", err);
-      throw err;
-    });
 }
 
 module.exports = function(messageParams, cb) {
-  saveMessageTransaction(messageParams)
+  saveMessageTransaction(messageParams, cb)
     .then(() => cb())
     .catch(err => {
       cb(undefined, err);
