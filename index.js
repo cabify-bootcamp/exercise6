@@ -8,7 +8,7 @@ const {
   ValidationError
 } = require("express-json-validator-middleware");
 
-const queueMessage = require("./src/controllers/queueMessage");
+const { queueMessage } = require("./src/controllers/queueMessage");
 const getMessages = require("./src/controllers/getMessages");
 const getMessageStatus = require("./src/controllers/getMessageStatus");
 const updateCredit = require("./src/controllers/updateCredit");
